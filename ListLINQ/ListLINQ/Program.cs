@@ -36,7 +36,9 @@ namespace ListLINQ
             Console.WriteLine("kasutame LINNQ selecti ehk teine variant");
             //siin koondame kogu info result muutuja sisse
             var result = person
-                .OrderBy(p => p.Name)
+                //where-ga saab teha konkreetse päringu, et vastab mingitele tingimustele
+                .Where(p => p.Id == 1 || p.Age == 9)
+                .OrderBy(p => p.Name) // jäejestab isikud nime järgi
                 .Select(x => new
                 {
                     Id = x.Id,
@@ -49,6 +51,17 @@ namespace ListLINQ
             {
                 Console.WriteLine("id on " + item.Id + " ja nimi on " + item.Name);
             }
+
+            Console.WriteLine("gruppide kaupa sorteerimine ");
+
+            var groupby = person
+                .GroupBy(p => p.Age);
+
+            foreach (var item in groupby)
+            {
+                Console.WriteLine("vanuse grupp on: {0}", item.Key);
+            }
+            
         }
     }
 }
