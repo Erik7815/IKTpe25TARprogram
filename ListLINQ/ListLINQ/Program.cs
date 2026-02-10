@@ -36,6 +36,7 @@ namespace ListLINQ
             Console.WriteLine("kasutame LINNQ selecti ehk teine variant");
             //siin koondame kogu info result muutuja sisse
             var result = person
+                .OrderBy(p => p.Name)
                 .Select(x => new
                 {
                     Id = x.Id,
