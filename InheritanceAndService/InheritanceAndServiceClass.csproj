@@ -7,4 +7,9 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\InheritanceAndServiceClass.AppServices\InheritanceAndServiceClass.AppServices.csproj" />
+    <ProjectReference Include="..\InheritanceAndServiceClass.Core\InheritanceAndServiceClass.Core.csproj" />
+  </ItemGroup>
+
 </Project>
