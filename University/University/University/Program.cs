@@ -1,6 +1,8 @@
-using University.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
+using University.Data;
+using Microsoft.Extensions.DependencyInjection;
+
+
 namespace University
 {
     public class Program
@@ -9,21 +11,20 @@ namespace University
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services.AddDbContext<UniversityContext>(Options =>
-            Options.UseSqlServer(builder.Configuration.GetConnectionString("UniversityContext")));
+            builder.Services.AddDbContext<UniversityContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("UniversityContext")));
 
-            var host = CreateHostBuilder(args).Build();
-            CreateDbIfNotExists(host);
-            host.Run();
-            //This will show detailed database errors during development
-            //Add database exception filter for development
+            // Add database exception filter for development environment
+            // This will show detailed database errors during development
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
-
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
+
+            // create DB if it doesn't exist and seed initial data
+            CreateDbIfNotExists(app);
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -46,10 +47,10 @@ namespace University
 
             app.Run();
         }
-    
-        //luuakse andmebaas kui see veel ei eksisteeri
-        //ja sisestab sinna algandmeid
-    private static void CreateDbIfNotExists(IHost host)
+
+        //luuakse andmebaas, kui see veel ei eksisteeri
+        //ja sisestab sinna algandmed
+        private static void CreateDbIfNotExists(IHost host)
         {
             using (var scope = host.Services.CreateScope())
             {
@@ -62,7 +63,7 @@ namespace University
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occured creating the DB.");
+                    logger.LogError(ex, "An error occurred creating the DB.");
                 }
             }
         }
