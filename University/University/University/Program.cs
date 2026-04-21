@@ -16,7 +16,7 @@ namespace University
 
             // Add database exception filter for development environment
             // This will show detailed database errors during development
-            
+            builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
