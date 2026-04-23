@@ -12,7 +12,7 @@ using University.Data;
 namespace University.Migrations
 {
     [DbContext(typeof(UniversityContext))]
-    [Migration("20260402073153_init")]
+    [Migration("20260402072228_init")]
     partial class init
     {
         /// <inheritdoc />

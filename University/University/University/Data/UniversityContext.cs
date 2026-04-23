@@ -19,5 +19,4 @@ namespace University.Data
             modelBuilder.Entity<Student>().ToTable("Student");
         }
     }
-
 }

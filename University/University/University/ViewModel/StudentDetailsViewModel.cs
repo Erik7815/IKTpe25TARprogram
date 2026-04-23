@@ -11,6 +11,7 @@ namespace University.ViewModel
 
         public ICollection<EnrollmentViewModel> EnrollmentsVm { get; set; }
     }
+
     public class EnrollmentViewModel
     {
         public int EnrollmentId { get; set; }
@@ -20,6 +21,7 @@ namespace University.ViewModel
 
         public CourseViewModel CourseVm { get; set; }
     }
+
     public class CourseViewModel
     {
         public int CourseId { get; set; }

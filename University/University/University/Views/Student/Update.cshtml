@@ -1,0 +1,29 @@
+﻿asd update works
+teha vaade kus on olemas väljad mis näitavad andmeid
+@model University.ViewModel.StudentUpdateViewModel
+
+@{
+    ViewData["Title"] = "Student Update";
+}
+<div>
+    <form asp-action="Update">
+        <div class="form-group">
+            <label asp-for="LastName" class="control-label"></label>
+            <input asp-for="LastName" class="form-control" />
+            <span asp-validation-for="LastName" class="text-bg-danger danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="FirstMidName" class="control-label"></label>
+            <input asp-for="FirstMidName" class="form-control" />
+            <span asp-validation-for="FirstMidName" class="text-bg-danger danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="EnrollmentDate" class="control-label"></label>
+            <input asp-for="EnrollmentDate" class="form-control" />
+            <span asp-validation-for="EnrollmentDate" class="text-bg-danger danger"></span>
+        </div>
+            <div class="form-group">
+
+            </div>
+        </form>
+</div>
