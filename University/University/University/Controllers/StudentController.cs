@@ -50,9 +50,9 @@ namespace University.Controllers
             var student = await _context.Students
                 //Include lubab objekti kasutada objekti sees
                 .Include(s => s.Enrollments)
-                //kui tahad uuesti objekti kasutada objekti sees, siis kasutad ThenInclude
+                    //kui tahad uuesti objekti kasutada objekti sees, siis kasutad ThenInclude
                     .ThenInclude(e => e.Course)
-                    //andmeid ei salvestata vahemällu ja ei jälgita
+                //andmeid ei salvestata vahemällu ja ei jälgita
                 .AsNoTracking()
                 //tagastab esimese elemendi andmetest, mis on tingimuses välja toodud
                 .FirstOrDefaultAsync(m => m.Id == id);
@@ -144,7 +144,82 @@ namespace University.Controllers
 
             };
             return View(update);
-            
+
+        }
+        [HttpPost]
+        public async Task<IActionResult> Update(StudentUpdateViewModel vm)
+        {
+            if (ModelState.IsValid)
+            {
+                var student = new Models.Student
+                {
+                    Id = vm.Id,
+                    LastName = vm.LastName,
+                    FirstMidName = vm.FirstMidName,
+                    EnrollmentDate = vm.EnrollmentDate
+                };
+                //lisame student'i andmebaasi ja salvestame muudatused
+                _context.Update(student);
+                //miks kasutame await?
+                //kui me kasutame await, siis me ootame kuni salvestamine on lõpetatud
+                await _context.SaveChangesAsync();
+                //pärast salvestamist suuname kasutaja tagasi Index vaatesse
+
+                //KUi andmed on uuendatud, siis suunab tagasi Update vaatesse, kus saab kohe uuesti andmeid uuendada.
+                //Hetkel suunab Index vaatesse peale uuendust
+                return RedirectToAction(nameof(Update));
+            }
+            return RedirectToAction(nameof(Index));
+        }
+        //tehke delete Get meetod koos vaatega
+        [HttpGet]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            //kui id on null, siis tagastame NotFound() tulemuse
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            //leiame student'i id järgi
+            var student = await _context.Students
+                //Include lubab objekti kasutada objekti sees
+                .Include(s => s.Enrollments)
+                    //kui tahad uuesti objekti kasutada objekti sees, siis kasutad ThenInclude
+                    .ThenInclude(e => e.Course)
+                //andmeid ei salvestata vahemällu ja ei jälgita
+                .AsNoTracking()
+                //tagastab esimese elemendi andmetest, mis on tingimuses välja toodud
+                .FirstOrDefaultAsync(m => m.Id == id);
+            var vm = new StudentDeleteViewModel
+            {
+                Id = student.Id,
+                LastName = student.LastName,
+                FirstMidName = student.FirstMidName,
+                EnrollmentDate = student.EnrollmentDate,
+                //miks kasutasime ?? - vaikiva väärtuse annab e default väärtus, kui muutuja on tühi (null)
+                //või mitte defineeritud. Annab enne vasakpoolse väärtuse, kui see ei ole null. Kui on null,
+                //siis annab parempoolse väärtuse.
+                EnrollmentsVm = (student.Enrollments ?? Enumerable.Empty<Enrollment>())
+                    .Select(x => new EnrollmentViewModel
+                    {
+                        CourseId = x.CourseId,
+                        Grade = x.Grade,
+                        CourseVm = new CourseViewModel
+                        {
+                            CourseId = x.Course?.CourseId ?? 0,
+                            Title = x.Course?.Title,
+                            Credits = x.Course?.Credits ?? 0
+                        }
+                    }).ToArray()
+            };
+                    if (student == null)
+            {
+                return NotFound();
+            }
+
+            //kui student on leitud, siis tagastame View(vm) tulemuse
+            return View(vm);
         }
     }
 }
