@@ -23,7 +23,19 @@ namespace University.Controllers
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
 
-            var students = from s in _context.Students select s;
+            //var students = from s in _context.Students select s;
+            var students = _context.Students
+                .Select(s => new ViewModel.StudentIndexViewModel
+                {
+                    Id = s.Id,
+                    LastName = s.LastName,
+                    FirstMidName = s.FirstMidName,
+                    EnrollmentDate = s.EnrollmentDate
+                    //miks kasutame ToListAsync()?
+                    //kui me kasutame ToListAsync(), siis me saame tulemuse listina
+                });
+
+            
 
             switch (sortOrder)
             {
@@ -43,22 +55,13 @@ namespace University.Controllers
                     students = students.OrderBy(s => s.LastName);
                     break;
             }
+            var result = await students.ToListAsync();
+            return View(students);
             //leiame kõik student'id ja teisendame need StudentIndexViewModel'iks
             //miks peab kasutama await?
             //kui me kasutame await, siis me ootame kuni päring on lõpetatud
             //ja saame tulemuse, enne kui me jätkame koodi täitmist
-            var result = await _context.Students
-                .Select(s => new ViewModel.StudentIndexViewModel
-                {
-                    Id = s.Id,
-                    LastName = s.LastName,
-                    FirstMidName = s.FirstMidName,
-                    EnrollmentDate = s.EnrollmentDate
-                    //miks kasutame ToListAsync()?
-                    //kui me kasutame ToListAsync(), siis me saame tulemuse listina
-                }).ToListAsync();
-
-            return View(result);
+            
         }
 
         public async Task<IActionResult> Details(int? id)
