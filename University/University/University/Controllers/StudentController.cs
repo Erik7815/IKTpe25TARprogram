@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using University.Data;
 using University.Models;
+using University.Utilities;
 using University.ViewModel;
 
 namespace University.Controllers
@@ -18,11 +19,20 @@ namespace University.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index(string sortOrder, string searchstring)
+        public async Task<IActionResult> Index(string sortOrder, string searchstring, int? pageNumber, string currentFilter)
         {
             ViewData["NameSortParm"] = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
             ViewData["DateSortParm"] = sortOrder == "Date" ? "date_desc" : "Date";
             ViewData["CurrentFilter"] = searchstring;
+
+            if (searchstring != null)
+            {
+                pageNumber = 1;
+            }
+            else
+            {
+                searchstring = currentFilter;
+            }
 
             //var students = from s in _context.Students select s;
             var students = _context.Students
@@ -62,7 +72,10 @@ namespace University.Controllers
                     break;
             }
             var result = await students.ToListAsync();
-            return View(students);
+
+            int pageSize = 3;
+
+            return View(await PaginatedList<StudentIndexViewModel>.CreateAsync(students.AsNoTracking(), pageNumber ?? 1, pageSize));
             //leiame kõik student'id ja teisendame need StudentIndexViewModel'iks
             //miks peab kasutama await?
             //kui me kasutame await, siis me ootame kuni päring on lõpetatud
