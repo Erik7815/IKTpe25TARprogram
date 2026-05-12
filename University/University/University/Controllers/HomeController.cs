@@ -44,6 +44,7 @@ namespace University.Controllers
                     EnrollmentDate = dateGroup.Key,
                     StudentCount = dateGroup.Count(),
                 };
+            //teha about vaade, mis kuvab üliõpilaste arvu registreerimise kuupäeva järgi
             return View(await data.AsNoTracking().ToListAsync());
         }
     }
