@@ -2,9 +2,10 @@ using Microsoft.EntityFrameworkCore;
 using University.Data;
 using Microsoft.Extensions.DependencyInjection;
 
-
 namespace University
 {
+
+    //Command- Update-Database
     public class Program
     {
         public static void Main(string[] args)
@@ -12,10 +13,11 @@ namespace University
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<UniversityContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("UniversityContext")));
+               options.UseSqlServer(builder.Configuration.GetConnectionString("UniversityContext")));
 
-            // Add database exception filter for development environment
-            // This will show detailed database errors during development
+
+            //add database exeption filter for development enviroment
+            //This will show detailed database errors durning development
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             // Add services to the container.
@@ -23,7 +25,7 @@ namespace University
 
             var app = builder.Build();
 
-            // create DB if it doesn't exist and seed initial data
+            // Create DB if it doesn't exist and seed initial data
             CreateDbIfNotExists(app);
 
             // Configure the HTTP request pipeline.
@@ -42,13 +44,13 @@ namespace University
             app.MapStaticAssets();
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}")
+                pattern: "{controller=Home}/{action=index}/{id?}")
                 .WithStaticAssets();
 
             app.Run();
         }
 
-        //luuakse andmebaas, kui see veel ei eksisteeri
+        //Luuakse andmebaas, kui see veel ei eksisteeri
         //ja sisestab sinna algandmed
         private static void CreateDbIfNotExists(IHost host)
         {
@@ -58,14 +60,15 @@ namespace University
                 try
                 {
                     var context = services.GetRequiredService<UniversityContext>();
-                    DbInitializer.Initialize(context);
+                    DbInitializer.Initializer(context);
                 }
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred creating the DB.");
+                    logger.LogError(ex, "An error occured creating the DB.");
                 }
             }
         }
     }
+
 }
